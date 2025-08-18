@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SayThat - 토론으로 답을 찾다</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <h1>SayThat</h1>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="토론 주제를 검색하세요">
+                <button class="search-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="auth-buttons">
+                <button class="btn-login" onclick="location.href='/login'">로그인</button>
+                <button class="btn-signup" onclick="location.href='/login'">회원가입</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- 인기순위 섹션 -->
+            <div class="trending-section">
+                <div class="trending-header">
+                    <button class="trending-nav prev" onclick="changeTrendingPeriod(-1)">‹</button>
+                    <h2 class="trending-title" id="trendingTitle">실시간 인기순위</h2>
+                    <button class="trending-nav next" onclick="changeTrendingPeriod(1)">›</button>
+                </div>
+                <div class="trending-list" id="trendingList">
+                    <!-- 인기순위 아이템이 여기 표시됩니다 -->
+                </div>
+            </div>
+
+            <!-- 최신 토론 섹션 -->
+            <div class="latest-section">
+                <h2 class="section-title">최신 토론</h2>
+            </div>
+            
+            <div class="topics-list" id="topicsList">
+                <!-- 토론 주제 아이템 예시 -->
+                <div class="topic-item">
+                    <div class="topic-main">
+                        <h3 class="topic-title">의대 정원 확대, 과연 필요한가?</h3>
+                        <div class="topic-meta">
+                            <span class="topic-time">2시간 전</span>
+                            <span class="topic-author">by 의료개혁추진</span>
+                        </div>
+                    </div>
+                    <div class="topic-stats">
+                        <div class="vote-section">
+                            <div class="vote-bar">
+                                <div class="vote-progress agree" style="width: 62%;">
+                                    <span class="vote-label">찬성 62%</span>
+                                </div>
+                                <div class="vote-progress disagree" style="width: 38%;">
+                                    <span class="vote-label">반대 38%</span>
+                                </div>
+                            </div>
+                            <div class="vote-count">총 3,421표</div>
+                        </div>
+                        <div class="topic-engagement">
+                            <span class="comment-count">💬 847 댓글</span>
+                            <span class="view-count">👁 15.2K 조회</span>
+                            <span class="heat-indicator hot">🔥 HOT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="topic-item">
+                    <div class="topic-main">
+                        <h3 class="topic-title">AI가 인간의 일자리를 대체하는 것을 막아야 하는가?</h3>
+                        <div class="topic-meta">
+                            <span class="topic-time">5시간 전</span>
+                            <span class="topic-author">by 테크워커</span>
+                        </div>
+                    </div>
+                    <div class="topic-stats">
+                        <div class="vote-section">
+                            <div class="vote-bar">
+                                <div class="vote-progress agree" style="width: 45%;">
+                                    <span class="vote-label">찬성 45%</span>
+                                </div>
+                                <div class="vote-progress disagree" style="width: 55%;">
+                                    <span class="vote-label">반대 55%</span>
+                                </div>
+                            </div>
+                            <div class="vote-count">총 2,156표</div>
+                        </div>
+                        <div class="topic-engagement">
+                            <span class="comment-count">💬 523 댓글</span>
+                            <span class="view-count">👁 8.7K 조회</span>
+                            <span class="heat-indicator hot">🔥 HOT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="topic-item">
+                    <div class="topic-main">
+                        <h3 class="topic-title">학교 체벌, 완전히 금지해야 하나?</h3>
+                        <div class="topic-meta">
+                            <span class="topic-time">8시간 전</span>
+                            <span class="topic-author">by 교육혁신21</span>
+                        </div>
+                    </div>
+                    <div class="topic-stats">
+                        <div class="vote-section">
+                            <div class="vote-bar">
+                                <div class="vote-progress agree" style="width: 78%;">
+                                    <span class="vote-label">찬성 78%</span>
+                                </div>
+                                <div class="vote-progress disagree" style="width: 22%;">
+                                    <span class="vote-label">반대 22%</span>
+                                </div>
+                            </div>
+                            <div class="vote-count">총 1,892표</div>
+                        </div>
+                        <div class="topic-engagement">
+                            <span class="comment-count">💬 412 댓글</span>
+                            <span class="view-count">👁 6.3K 조회</span>
+                            <span class="heat-indicator warm">🌡 논란중</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="topic-item">
+                    <div class="topic-main">
+                        <h3 class="topic-title">반려동물 등록제를 의무화해야 하는가?</h3>
+                        <div class="topic-meta">
+                            <span class="topic-time">12시간 전</span>
+                            <span class="topic-author">by 펫러버2024</span>
+                        </div>
+                    </div>
+                    <div class="topic-stats">
+                        <div class="vote-section">
+                            <div class="vote-bar">
+                                <div class="vote-progress agree" style="width: 89%;">
+                                    <span class="vote-label">찬성 89%</span>
+                                </div>
+                                <div class="vote-progress disagree" style="width: 11%;">
+                                    <span class="vote-label">반대 11%</span>
+                                </div>
+                            </div>
+                            <div class="vote-count">총 1,234표</div>
+                        </div>
+                        <div class="topic-engagement">
+                            <span class="comment-count">💬 287 댓글</span>
+                            <span class="view-count">👁 4.1K 조회</span>
+                            <span class="heat-indicator warm">🌡 논란중</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="topic-item">
+                    <div class="topic-main">
+                        <h3 class="topic-title">원자력 발전소를 더 늘려야 하는가?</h3>
+                        <div class="topic-meta">
+                            <span class="topic-time">1일 전</span>
+                            <span class="topic-author">by 에너지전환</span>
+                        </div>
+                    </div>
+                    <div class="topic-stats">
+                        <div class="vote-section">
+                            <div class="vote-bar">
+                                <div class="vote-progress agree" style="width: 51%;">
+                                    <span class="vote-label">찬성 51%</span>
+                                </div>
+                                <div class="vote-progress disagree" style="width: 49%;">
+                                    <span class="vote-label">반대 49%</span>
+                                </div>
+                            </div>
+                            <div class="vote-count">총 987표</div>
+                        </div>
+                        <div class="topic-engagement">
+                            <span class="comment-count">💬 198 댓글</span>
+                            <span class="view-count">👁 3.2K 조회</span>
+                            <span class="heat-indicator">💭 활발</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="spinner"></div>
+                <span>더 많은 토론 주제를 불러오는 중...</span>
+            </div>
+        </div>
+    </main>
+
+    <button class="create-topic-btn">
+        <span>+</span> 새 토론 시작
+    </button>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
