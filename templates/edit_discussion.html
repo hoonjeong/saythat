@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>토론 수정 - SayThat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/new_discussion.css') }}">
+    <!-- Quill Editor CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <!-- Quill Editor JS -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <h1 onclick="location.href='/'">SayThat</h1>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="토론 주제를 검색하세요">
+                <button class="search-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="auth-buttons">
+                {% if current_user.is_authenticated %}
+                    <span class="user-name">{{ current_user.name }}</span>
+                    <button class="btn-logout" onclick="location.href='/logout'">로그아웃</button>
+                {% else %}
+                    <button class="btn-login" onclick="location.href='/login'">로그인</button>
+                    <button class="btn-signup" onclick="location.href='/login'">회원가입</button>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="new-discussion-container">
+                <h2 class="page-title">토론 수정</h2>
+                
+                <div class="form-group">
+                    <label for="discussionTitle">토론 제목</label>
+                    <input type="text" 
+                           id="discussionTitle" 
+                           class="discussion-title-input" 
+                           value="{{ discussion.subject }}"
+                           maxlength="200">
+                    <div class="char-count">
+                        <span id="titleCharCount">0</span>/200
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="discussionContent">토론 내용</label>
+                    <div id="editor-container">
+                        <div id="editor">{{ discussion.content|safe }}</div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="updateDiscussion()">수정</button>
+                    <button class="btn btn-secondary" onclick="cancelEdit()">취소</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const discussionId = {{ discussion.id }};
+
+        // Quill 에디터 초기화
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            placeholder: '토론 내용을 작성해주세요...',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    ['blockquote', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'align': [] }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['link', 'image', 'video'],
+                    ['clean']
+                ]
+            }
+        });
+
+        // 이미지 업로드 핸들러
+        quill.getModule('toolbar').addHandler('image', function() {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.click();
+
+            input.onchange = async () => {
+                const file = input.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const range = quill.getSelection();
+                        quill.insertEmbed(range.index, 'image', e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+        });
+
+        // 제목 글자수 카운트 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleInput = document.getElementById('discussionTitle');
+            document.getElementById('titleCharCount').textContent = titleInput.value.length;
+        });
+
+        // 제목 글자수 카운트
+        document.getElementById('discussionTitle').addEventListener('input', function(e) {
+            const charCount = e.target.value.length;
+            document.getElementById('titleCharCount').textContent = charCount;
+        });
+
+        // 토론 수정
+        async function updateDiscussion() {
+            const title = document.getElementById('discussionTitle').value.trim();
+            const content = quill.root.innerHTML;
+
+            if (!title) {
+                alert('토론 제목을 입력해주세요.');
+                return;
+            }
+
+            if (!content || content === '<p><br></p>' || quill.getText().trim() === '') {
+                alert('토론 내용을 입력해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/update-discussion/${discussionId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        subject: title,
+                        content: content
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('수정되었습니다.');
+                    window.location.href = `/discussion/${discussionId}`;
+                } else {
+                    alert('수정 중 오류가 발생했습니다: ' + result.message);
+                }
+            } catch (error) {
+                alert('수정 중 오류가 발생했습니다.');
+                console.error(error);
+            }
+        }
+
+        // 취소
+        function cancelEdit() {
+            if (confirm('수정을 취소하시겠습니까?')) {
+                window.location.href = `/discussion/${discussionId}`;
+            }
+        }
+    </script>
+</body>
+</html>

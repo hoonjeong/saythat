@@ -22,8 +22,33 @@
                 </button>
             </div>
             <div class="auth-buttons">
-                <button class="btn-login" onclick="location.href='/login'">로그인</button>
-                <button class="btn-signup" onclick="location.href='/login'">회원가입</button>
+                {% if session.user_id %}
+                    <span class="user-name">
+                        {% if user_level %}
+                        <span class="level-wrapper">
+                            <span class="level-icon">{{ user_level.level_icon }}</span>
+                            <div class="level-tooltip">
+                                찬성, 반대 투표시 레벨에 따라 추천수가 올라갑니다.<br><br>
+                                💀 해골 : +1 효과<br>
+                                🥉 동메달 : +2 효과<br>
+                                🥈 은메달 : +4 효과<br>
+                                🥇 금메달 : +8 효과<br>
+                                💎 다이아 : +16 효과<br><br>
+                                <strong>현재: {{ user_level.level_name }} (+{{ user_level.voting_power }})</strong><br><br>
+                                <span style="color: #ff6b6b; font-size: 11px;">⚠️ 부정한 방법으로 포인트를 어뷰징하는 경우,<br>해골로 강등될 수 있음</span>
+                            </div>
+                        </span>
+                        {% endif %}
+                        {{ session.user_nick }}
+                        {% if user_level %}
+                        <span class="user-points">({{ user_level.point }}P)</span>
+                        {% endif %}
+                    </span>
+                    <button class="btn-logout" onclick="location.href='/logout'">로그아웃</button>
+                {% else %}
+                    <button class="btn-login" onclick="location.href='/login'">로그인</button>
+                    <button class="btn-signup" onclick="location.href='/register'">회원가입</button>
+                {% endif %}
             </div>
         </div>
     </header>
@@ -48,6 +73,63 @@
             </div>
             
             <div class="topics-list" id="topicsList">
+                <!-- 새로 생성된 토론들 표시 -->
+                {% for discussion in discussions %}
+                <div class="topic-item" onclick="location.href='/discussion/{{ discussion.id }}'">
+                    <div class="topic-main">
+                        <h3 class="topic-title">{{ discussion.subject }}</h3>
+                        <div class="topic-meta">
+                            <span class="topic-time">{{ discussion.insert_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                            <span class="topic-author">by 
+                                {% if discussion.author %}
+                                    {% if discussion.author.level_info %}
+                                    <span class="level-wrapper">
+                                        <span class="level-icon-small">{{ discussion.author.level_info.level_icon }}</span>
+                                        <div class="level-tooltip">
+                                            찬성, 반대 투표시 레벨에 따라 추천수가 올라갑니다.<br><br>
+                                            💀 해골 : +1 효과<br>
+                                            🥉 동메달 : +2 효과<br>
+                                            🥈 은메달 : +4 효과<br>
+                                            🥇 금메달 : +8 효과<br>
+                                            💎 다이아 : +16 효과<br><br>
+                                            <strong>현재: {{ discussion.author.level_info.level_name }} (+{{ discussion.author.level_info.voting_power }})</strong><br><br>
+                                            <span style="color: #ff6b6b; font-size: 11px;">⚠️ 부정한 방법으로 포인트를 어뷰징하는 경우,<br>해골로 강등될 수 있음</span>
+                                        </div>
+                                    </span>
+                                    {% endif %}
+                                    {{ discussion.author.nick }}
+                                    {% if discussion.author.level_info %}
+                                    <span class="user-points-small">({{ discussion.author.level_info.point }}P)</span>
+                                    {% endif %}
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="topic-stats">
+                        <div class="vote-section">
+                            <div class="vote-bar">
+                                {% set total = discussion.chan + discussion.ban %}
+                                {% set chan_percent = (discussion.chan / total * 100) if total > 0 else 50 %}
+                                {% set ban_percent = 100 - chan_percent %}
+                                <div class="vote-progress agree" style="width: {{ chan_percent }}%;">
+                                    <span class="vote-label">찬성 {{ chan_percent|int }}%</span>
+                                </div>
+                                <div class="vote-progress disagree" style="width: {{ ban_percent }}%;">
+                                    <span class="vote-label">반대 {{ ban_percent|int }}%</span>
+                                </div>
+                            </div>
+                            <div class="vote-count">총 {{ total }}표</div>
+                        </div>
+                        <div class="topic-engagement">
+                            <span class="comment-count">💬 {{ discussion.comments|length }} 댓글</span>
+                            <span class="view-count">👁 {{ discussion.view_count }} 조회</span>
+                            <span class="heat-indicator">💭 NEW</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
                 <!-- 토론 주제 아이템 예시 -->
                 <div class="topic-item">
                     <div class="topic-main">
@@ -197,7 +279,7 @@
         </div>
     </main>
 
-    <button class="create-topic-btn">
+    <button class="create-topic-btn" onclick="location.href='/new-discussion'">
         <span>+</span> 새 토론 시작
     </button>
 

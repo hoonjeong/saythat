@@ -1,0 +1,178 @@
+.new-discussion-container {
+    max-width: 900px;
+    margin: 30px auto;
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.discussion-title-input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.discussion-title-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.char-count {
+    text-align: right;
+    margin-top: 5px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+#editor-container {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+}
+
+#editor-container:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+#editor {
+    min-height: 400px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 15px;
+}
+
+.button-group {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn {
+    padding: 12px 40px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--light-gray);
+    border-color: var(--text-secondary);
+}
+
+/* Quill 에디터 스타일 조정 */
+.ql-toolbar.ql-snow {
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--light-gray);
+    padding: 10px;
+    border-radius: 8px 8px 0 0;
+}
+
+.ql-container.ql-snow {
+    border: none;
+    font-size: 15px;
+}
+
+.ql-editor {
+    padding: 20px;
+    min-height: 400px;
+}
+
+.ql-editor.ql-blank::before {
+    color: var(--text-secondary);
+    font-style: normal;
+}
+
+.ql-snow .ql-tooltip {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    color: var(--text-primary);
+    z-index: 9999;
+}
+
+.ql-snow .ql-tooltip input[type=text] {
+    border: 1px solid var(--border-color);
+}
+
+.ql-snow .ql-tooltip a.ql-action::after {
+    color: var(--primary-color);
+}
+
+.ql-snow .ql-tooltip a.ql-remove::before {
+    color: var(--disagree-color);
+}
+
+/* 사용자 정보 표시 스타일 */
+.user-name {
+    margin-right: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.btn-logout {
+    padding: 10px 20px;
+    background: white;
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+    background: var(--light-gray);
+    border-color: var(--text-secondary);
+}

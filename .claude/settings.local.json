@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(curl:*)",
+      "Bash(del check_display.py create_sample_data.py quick_test.py test_*.py test_*.html)",
+      "Bash(rm:*)",
+      "Bash(del create_view_table.py test_views.py)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

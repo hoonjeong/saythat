@@ -140,6 +140,127 @@ header {
     box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
 
+.user-name {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.btn-logout {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    background: white;
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+}
+
+.btn-logout:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(255, 107, 53, 0.05);
+}
+
+/* 레벨 및 포인트 스타일 */
+.level-icon {
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+.level-icon-small {
+    font-size: 14px;
+    margin-right: 3px;
+}
+
+.user-points {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.user-points-small {
+    color: var(--primary-color);
+    font-weight: 500;
+    font-size: 12px;
+    margin-left: 3px;
+}
+
+.topic-author {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* 툴팁 스타일 */
+.level-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.level-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: normal;
+    min-width: 250px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    margin-bottom: 5px;
+    z-index: 1000;
+    line-height: 1.5;
+    text-align: left;
+}
+
+/* 헤더에 있는 툴팁은 아래로 표시 */
+.auth-buttons .level-tooltip {
+    bottom: auto;
+    top: 100%;
+    margin-bottom: 0;
+    margin-top: 5px;
+}
+
+.level-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+}
+
+/* 헤더 툴팁의 화살표는 위로 */
+.auth-buttons .level-tooltip::after {
+    top: auto;
+    bottom: 100%;
+    border-top-color: transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.9);
+}
+
+.level-wrapper:hover .level-tooltip {
+    opacity: 1;
+}
+
+.level-icon, .level-icon-small {
+    cursor: help;
+}
+
 .container {
     max-width: 900px;
     margin: 0 auto;

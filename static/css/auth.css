@@ -14,6 +14,8 @@
     --text-secondary: #657786;
     --border-color: #E1E8ED;
     --light-gray: #F5F7FA;
+    --error-color: #F44336;
+    --success-color: #4CAF50;
 }
 
 body {
@@ -368,6 +370,231 @@ body {
     .modal-body h3 {
         font-size: 16px;
     }
+}
+
+/* 회원가입/로그인 폼 스타일 */
+.auth-form {
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.input-with-button {
+    display: flex;
+    gap: 10px;
+}
+
+.input-with-button input {
+    flex: 1;
+}
+
+.check-btn {
+    padding: 12px 20px;
+    background: white;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.check-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.message {
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.message.error {
+    color: var(--error-color);
+}
+
+.message.success {
+    color: var(--success-color);
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.checkbox-label span {
+    user-select: none;
+}
+
+.auth-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.auth-links {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.auth-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 14px;
+    margin: 0 10px;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+}
+
+.auth-links span {
+    color: var(--text-secondary);
+    margin: 0 5px;
+}
+
+.auth-terms {
+    text-align: center;
+    margin: 15px 0;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.auth-terms a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.auth-terms a:hover {
+    text-decoration: underline;
+}
+
+.back-home {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.back-home:hover {
+    color: var(--primary-color);
+}
+
+/* 비밀번호 찾기 모달 */
+#forgotPasswordModal .modal-content {
+    max-width: 400px;
+    padding: 30px;
+}
+
+#forgotPasswordModal h3 {
+    font-size: 20px;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+}
+
+#forgotPasswordModal p {
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+#forgotPasswordModal input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+
+#forgotPasswordModal button {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#forgotPasswordModal button:hover {
+    background: var(--secondary-color);
+}
+
+#forgotPasswordModal .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+#forgotPasswordModal .close:hover {
+    color: var(--text-primary);
 }
 
 @media (max-width: 480px) {

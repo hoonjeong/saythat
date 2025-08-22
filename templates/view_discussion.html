@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ discussion.subject }} - SayThat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/view_discussion.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <h1 onclick="location.href='/'">SayThat</h1>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="토론 주제를 검색하세요">
+                <button class="search-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="auth-buttons">
+                {% if session.user_id %}
+                    <span class="user-name">
+                        {% if user_level %}
+                        <span class="level-wrapper">
+                            <span class="level-icon">{{ user_level.level_icon }}</span>
+                            <div class="level-tooltip">
+                                찬성, 반대 투표시 레벨에 따라 추천수가 올라갑니다.<br><br>
+                                💀 해골 : +1 효과<br>
+                                🥉 동메달 : +2 효과<br>
+                                🥈 은메달 : +4 효과<br>
+                                🥇 금메달 : +8 효과<br>
+                                💎 다이아 : +16 효과<br><br>
+                                <strong>현재: {{ user_level.level_name }} (+{{ user_level.voting_power }})</strong><br><br>
+                                <span style="color: #ff6b6b; font-size: 11px;">⚠️ 부정한 방법으로 포인트를 어뷰징하는 경우,<br>해골로 강등될 수 있음</span>
+                            </div>
+                        </span>
+                        {% endif %}
+                        {{ session.user_nick }}
+                        {% if user_level %}
+                        <span class="user-points">({{ user_level.point }}P)</span>
+                        {% endif %}
+                    </span>
+                    <button class="btn-logout" onclick="location.href='/logout'">로그아웃</button>
+                {% else %}
+                    <button class="btn-login" onclick="location.href='/login'">로그인</button>
+                    <button class="btn-signup" onclick="location.href='/register'">회원가입</button>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="discussion-container">
+                <!-- 토론 제목 -->
+                <h1 class="discussion-title">{{ discussion.subject }}</h1>
+                
+                <!-- 토론 메타 정보 -->
+                <div class="discussion-meta">
+                    <span class="meta-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        {{ discussion.insert_time.strftime('%Y-%m-%d %H:%M') }}
+                    </span>
+                    <span class="meta-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        {% if discussion.author %}
+                            {% if discussion.author.level_info %}
+                            <span class="level-wrapper">
+                                <span class="level-icon-small">{{ discussion.author.level_info.level_icon }}</span>
+                                <div class="level-tooltip">
+                                    찬성, 반대 투표시 레벨에 따라 추천수가 올라갑니다.<br><br>
+                                    💀 해골 : +1 효과<br>
+                                    🥉 동메달 : +2 효과<br>
+                                    🥈 은메달 : +4 효과<br>
+                                    🥇 금메달 : +8 효과<br>
+                                    💎 다이아 : +16 효과<br><br>
+                                    <strong>현재: {{ discussion.author.level_info.level_name }} (+{{ discussion.author.level_info.voting_power }})</strong><br><br>
+                                    <span style="color: #ff6b6b; font-size: 11px;">⚠️ 부정한 방법으로 포인트를 어뷰징하는 경우,<br>해골로 강등될 수 있음</span>
+                                </div>
+                            </span>
+                            {% endif %}
+                            {{ discussion.author.nick }}
+                            {% if discussion.author.level_info %}
+                            <span class="user-points-small">({{ discussion.author.level_info.point }}P)</span>
+                            {% endif %}
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </span>
+                    <span class="meta-item vote-info">
+                        <span class="chan">찬성 {{ discussion.chan }}</span>
+                        <span class="ban">반대 {{ discussion.ban }}</span>
+                    </span>
+                    <span class="meta-item">
+                        💬 {{ discussion.comments|length }} 댓글
+                    </span>
+                    <span class="meta-item">
+                        👁 {{ discussion.view_count }} 조회
+                    </span>
+                    {% if is_author %}
+                    <span class="meta-item">
+                        <a href="/edit-discussion/{{ discussion.id }}" class="edit-link">수정</a>
+                        <a href="#" onclick="deleteDiscussion()" class="delete-link">삭제</a>
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- 토론 내용 -->
+                <div class="discussion-content">
+                    {{ discussion.content|safe }}
+                </div>
+
+                <!-- 투표 버튼 -->
+                <div class="vote-buttons">
+                    <button class="vote-btn chan-btn" onclick="vote('chan')" {% if voted or is_author %}disabled{% endif %}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                        </svg>
+                        찬성 ({{ discussion.chan }})
+                    </button>
+                    <button class="vote-btn ban-btn" onclick="vote('ban')" {% if voted or is_author %}disabled{% endif %}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path>
+                        </svg>
+                        반대 ({{ discussion.ban }})
+                    </button>
+                    <button class="vote-btn list-btn" onclick="location.href='/'">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"></line>
+                            <line x1="8" y1="12" x2="21" y2="12"></line>
+                            <line x1="8" y1="18" x2="21" y2="18"></line>
+                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                        목록으로
+                    </button>
+                </div>
+
+                {% if is_author %}
+                <div class="vote-message">자신이 작성한 글에는 투표할 수 없습니다.</div>
+                {% elif voted %}
+                <div class="vote-message">이미 {{ voted }}를 누르셨습니다.</div>
+                {% endif %}
+
+                <!-- 댓글 작성 영역 -->
+                <div class="comment-form">
+                    <h3>댓글 작성</h3>
+                    <textarea id="commentContent" placeholder="댓글을 작성해주세요..." rows="4"></textarea>
+                    <div class="comment-options">
+                        <div class="opinion-select">
+                            <label>
+                                <input type="radio" name="opinion" value="1" checked>
+                                <span class="opinion-label chan">찬성</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="opinion" value="0">
+                                <span class="opinion-label ban">반대</span>
+                            </label>
+                        </div>
+                        <button class="btn-save-comment" onclick="saveComment()">댓글 저장</button>
+                    </div>
+                </div>
+
+                <!-- 댓글 목록 -->
+                <div class="comments-section">
+                    <div class="comments-header">
+                        <h3>댓글 ({{ comments|length }})</h3>
+                        <div class="sort-options">
+                            <a href="/discussion/{{ discussion.id }}?sort=best" 
+                               class="sort-btn {% if sort_order == 'best' %}active{% endif %}">추천순</a>
+                            <a href="/discussion/{{ discussion.id }}?sort=newest" 
+                               class="sort-btn {% if sort_order == 'newest' %}active{% endif %}">최신순</a>
+                        </div>
+                    </div>
+                    {% if comments %}
+                        <div class="comments-list">
+                            {% for comment in comments %}
+                            <div class="comment-item {% if loop.index <= best_count and sort_order == 'best' %}best-comment{% endif %}">
+                                {% if loop.index <= best_count and sort_order == 'best' %}
+                                <span class="best-badge">BEST {{ loop.index }}</span>
+                                {% endif %}
+                                <div class="comment-header">
+                                    <span class="comment-opinion {{ 'chan' if comment.chanban == 1 else 'ban' }}">
+                                        {{ '찬성' if comment.chanban == 1 else '반대' }}
+                                    </span>
+                                    <span class="comment-content">{{ comment.content }}</span>
+                                </div>
+                                <div class="comment-footer">
+                                    <span class="comment-meta">
+                                        {{ comment.insert_time.strftime('%Y-%m-%d %H:%M') }} | 
+                                        작성자: 
+                                        {% if comment.author %}
+                                            {% if comment.author.level_info %}
+                                            <span class="level-wrapper">
+                                                <span class="level-icon-small">{{ comment.author.level_info.level_icon }}</span>
+                                                <div class="level-tooltip">
+                                                    찬성, 반대 투표시 레벨에 따라 추천수가 올라갉니다.<br>
+                                                    💀 해골 : +1 효과<br>
+                                                    🥉 동메달 : +2 효과<br>
+                                                    🥈 은메달 : +4 효과<br>
+                                                    🥇 금메달 : +8 효과<br>
+                                                    💎 다이아 : +16 효과<br><br>
+                                                    <strong>현재: {{ comment.author.level_info.level_name }} (+{{ comment.author.level_info.voting_power }})</strong><br><br>
+                                                    <span style="color: #ff6b6b; font-size: 11px;">⚠️ 부정한 방법으로 포인트를 어뷰징하는 경우,<br>해골로 강등될 수 있음</span>
+                                                </div>
+                                            </span>
+                                            {% endif %}
+                                            {{ comment.author.nick }}
+                                            {% if comment.author.level_info %}
+                                            <span class="user-points-small">({{ comment.author.level_info.point }}P)</span>
+                                            {% endif %}
+                                        {% else %}
+                                            Unknown
+                                        {% endif %}
+                                    </span>
+                                    <div class="comment-actions">
+                                        <button class="comment-vote-btn" onclick="voteComment({{ comment.id }}, 'plus')">
+                                            👍 {{ comment.vote_plus }}
+                                        </button>
+                                        <button class="comment-vote-btn" onclick="voteComment({{ comment.id }}, 'minus')">
+                                            👎 {{ comment.vote_minus }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-comments">
+                            현재 댓글이 없습니다. 댓글을 작성해보세요.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const discussionId = {{ discussion.id }};
+
+        async function vote(type) {
+            if (!confirm(`이 토론에 ${type === 'chan' ? '찬성' : '반대'}하시겠습니까? (취소 불가)`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/vote/${discussionId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ vote_type: type })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    location.reload();
+                } else {
+                    if (response.status === 401) {
+                        alert('로그인이 필요합니다.');
+                        window.location.href = '/login';
+                    } else {
+                        alert(result.message);
+                    }
+                }
+            } catch (error) {
+                alert('투표 중 오류가 발생했습니다.');
+                console.error(error);
+            }
+        }
+
+        async function saveComment() {
+            const content = document.getElementById('commentContent').value.trim();
+            const chanban = document.querySelector('input[name="opinion"]:checked').value;
+
+            if (!content) {
+                alert('댓글 내용을 입력해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/save-comment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: content,
+                        content_id: discussionId,
+                        chanban: parseInt(chanban)
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    location.reload();
+                } else {
+                    if (response.status === 401) {
+                        alert('로그인이 필요합니다.');
+                        window.location.href = '/login';
+                    } else {
+                        alert(result.message);
+                    }
+                }
+            } catch (error) {
+                alert('댓글 저장 중 오류가 발생했습니다.');
+                console.error(error);
+            }
+        }
+
+        async function voteComment(commentId, type) {
+            try {
+                const response = await fetch(`/api/vote-comment/${commentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ vote_type: type })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    location.reload();
+                } else {
+                    alert(result.message || '투표 중 오류가 발생했습니다.');
+                }
+            } catch (error) {
+                alert('투표 중 오류가 발생했습니다.');
+                console.error(error);
+            }
+        }
+
+        async function deleteDiscussion() {
+            if (!confirm('정말 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/delete-discussion/${discussionId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('삭제되었습니다.');
+                    location.href = '/';
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                alert('삭제 중 오류가 발생했습니다.');
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
